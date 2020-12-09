@@ -12,16 +12,20 @@ public class MenuScreen extends BaseScreen {
 
     private Texture img;
     private Vector2 pos;
-    private Vector2 v;
-    private int vX;
-    private int vY;
+    private Vector2 touchVector;
+    private Vector2 addVector;
+    private Vector2 tmpVector;
+
 
     @Override
     public void show() {
         super.show();
         img = new Texture("badlogic.jpg");
         pos = new Vector2();
-        v = new Vector2();
+        touchVector = new Vector2();
+        addVector = new Vector2();
+        tmpVector = new Vector2();
+
     }
 
     @Override
@@ -32,9 +36,11 @@ public class MenuScreen extends BaseScreen {
         batch.begin();
         batch.draw(img, pos.x, pos.y);
         batch.end();
-        if (Math.round(pos.x) == vX && Math.round(pos.y) == vY)
-            v.set(0, 0);
-        pos.add(v);
+        tmpVector.set(touchVector);
+        if (addVector.len() < tmpVector.sub(pos).len())
+            pos.add(addVector);
+        else
+            pos.set(touchVector);
     }
 
     @Override
@@ -45,11 +51,10 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        vX = screenX;
-        vY = Gdx.graphics.getHeight() - screenY;
-        v.set(screenX, Gdx.graphics.getHeight() - screenY);
-        v.sub(pos);
-        v.nor();
+        touchVector.set(screenX, Gdx.graphics.getHeight() - screenY);
+        addVector = touchVector.cpy().sub(pos);
+        addVector.nor();
+        addVector.scl(5);
         return super.touchDown(screenX, screenY, pointer, button);
     }
 
