@@ -8,10 +8,10 @@ import ru.geekbrains.math.Rect;
 
 public class Sprite extends Rect {
 
-    private float angle;
-    private float scale = 1;
-    private TextureRegion[] regions;
-    private int frame;
+    protected float angle;
+    protected float scale = 1;
+    protected TextureRegion[] regions;
+    protected int frame;
 
     public Sprite(TextureRegion region) {
         regions = new TextureRegion[1];
