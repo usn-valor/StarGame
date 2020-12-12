@@ -10,6 +10,8 @@ import ru.geekbrains.math.Rect;
 
 public class Logo extends Sprite {
 
+    private static final float ADD_VECTOR_LENGTH = 0.01f;
+
     private Vector2 touchVector;
     private Vector2 addVector;
     private Vector2 tmpVector;
@@ -24,39 +26,23 @@ public class Logo extends Sprite {
 
     @Override
     public void resize(Rect worldBounds) {
-        setHeightProportion(worldBounds.getHeight());
+        setHeightProportion(0.3f);
         this.pos.set(worldBounds.pos);
     }
 
     @Override
-    public void draw(SpriteBatch batch) {
-        batch.draw(
-                regions[frame],
-                getLeft(), getBottom(),
-                halfWidth, halfHeight,
-                getWidth() / 2, getHeight() / 2,
-                scale, scale,
-                angle
-        );
+    public void update(float delta) {
         tmpVector.set(touchVector);
-        if (addVector.len() < tmpVector.sub(getLeft(), getBottom()).len())
+        if (addVector.len() < tmpVector.sub(pos).len())
             pos.add(addVector);
         else
-            pos.set(touchVector.x + halfWidth, touchVector.y + halfHeight);
+            pos.set(touchVector);
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        System.out.println(toString());
         touchVector = touch;
-        addVector = touch.cpy().sub(getLeft(), getBottom()).setLength(0.01f);
-        return super.touchDown(touch, pointer, button);
-    }
-
-    @Override
-    public String toString() {
-        return "Logo{" +
-                "pos=" + pos +
-                '}';
+        addVector = touch.cpy().sub(pos).setLength(ADD_VECTOR_LENGTH);
+        return false;
     }
 }
