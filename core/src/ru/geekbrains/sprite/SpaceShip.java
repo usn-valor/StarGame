@@ -12,7 +12,7 @@ import ru.geekbrains.pool.BulletPool;
 public class SpaceShip extends Sprite {
 
     private static final float HEIGHT = 0.15f;
-    private static final float BOTTOM_MARGIN = 0.05f;
+    private static final float BOTTOM_MARGIN = 0.01f;
 
     private static final int INVALID_POINTER = -1;
 
@@ -51,11 +51,11 @@ public class SpaceShip extends Sprite {
     public void update(float delta) {
         pos.mulAdd(v, delta);
         if (getRight() > worldBounds.getRight()) {
-            setRight(worldBounds.getRight());
+            setRight(worldBounds.getRight() - BOTTOM_MARGIN);
             stop();
         }
         if (getLeft() < worldBounds.getLeft()) {
-            setLeft(worldBounds.getLeft());
+            setLeft(worldBounds.getLeft() + BOTTOM_MARGIN);
             stop();
         }
     }
@@ -104,7 +104,7 @@ public class SpaceShip extends Sprite {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        if (touch.x < worldBounds.pos.x) {
+        if (touch.x <= pos.x) {
             if (leftPointer != INVALID_POINTER) {
                 return false;
             }
@@ -141,7 +141,7 @@ public class SpaceShip extends Sprite {
     }
 
     private void moveLeft() {
-        v.set(v0).rotate(180);
+        v.set(v0).rotateDeg(180);
     }
 
     private void moveRight() {

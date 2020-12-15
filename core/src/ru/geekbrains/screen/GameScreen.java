@@ -46,7 +46,6 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         update(delta);
-        freeAllDestroyed();
         draw();
     }
 
@@ -96,9 +95,6 @@ public class GameScreen extends BaseScreen {
             star.update(delta);
         bulletPool.updateActiveObjects(delta);
         ship.update(delta);
-    }
-
-    private void freeAllDestroyed() {
         bulletPool.freeAllDestroyedActiveObjects();
     }
 
