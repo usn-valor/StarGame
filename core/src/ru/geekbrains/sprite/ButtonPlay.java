@@ -1,6 +1,7 @@
 package ru.geekbrains.sprite;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import ru.geekbrains.base.BaseButton;
 import ru.geekbrains.math.Rect;

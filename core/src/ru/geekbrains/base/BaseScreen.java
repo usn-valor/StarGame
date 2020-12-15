@@ -3,6 +3,7 @@ package ru.geekbrains.base;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -12,6 +13,9 @@ import ru.geekbrains.math.MatrixUtils;
 import ru.geekbrains.math.Rect;
 
 public abstract class BaseScreen implements Screen, InputProcessor {
+
+    protected static Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+    protected static float playPos;
 
     protected SpriteBatch batch;
 
@@ -83,6 +87,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         System.out.println("dispose");
+        music.dispose();
         batch.dispose();
     }
 

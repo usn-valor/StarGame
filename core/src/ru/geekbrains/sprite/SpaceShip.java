@@ -13,6 +13,7 @@ public class SpaceShip extends Sprite {
 
     private static final float HEIGHT = 0.15f;
     private static final float BOTTOM_MARGIN = 0.01f;
+    private static final int SHOOT_FREQUENCY = 10;
 
     private static final int INVALID_POINTER = -1;
 
@@ -30,6 +31,8 @@ public class SpaceShip extends Sprite {
 
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
+
+    private int shootInterrupter;
 
     public SpaceShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
@@ -57,6 +60,11 @@ public class SpaceShip extends Sprite {
         if (getLeft() < worldBounds.getLeft()) {
             setLeft(worldBounds.getLeft() + BOTTOM_MARGIN);
             stop();
+        }
+        shootInterrupter++;
+        if (shootInterrupter == SHOOT_FREQUENCY) {
+            shoot();
+            shootInterrupter = 0;
         }
     }
 
@@ -154,6 +162,7 @@ public class SpaceShip extends Sprite {
 
     private void shoot() {
         Bullet bullet = bulletPool.obtain();
+        bullet.makeSound();
         bullet.set(this, bulletRegion, pos, bulletV, 0.01f, worldBounds, 1);
     }
 }
