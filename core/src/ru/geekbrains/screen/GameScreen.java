@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
+import ru.geekbrains.pool.BulletPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.SpaceShip;
 import ru.geekbrains.sprite.Star;
@@ -23,6 +24,7 @@ public class GameScreen extends BaseScreen {
     private TextureAtlas atlas;
     private Star[] stars;
     private SpaceShip ship;
+    private BulletPool bulletPool;
 
     @Override
     public void show() {
@@ -36,13 +38,15 @@ public class GameScreen extends BaseScreen {
         for (int i = 0; i < STAR_COUNT; i++)
             stars[i] = new Star(atlas);
 
-        ship = new SpaceShip(atlas);
+        bulletPool = new BulletPool();
+        ship = new SpaceShip(atlas, bulletPool);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        freeAllDestroyed();
         draw();
     }
 
@@ -59,30 +63,19 @@ public class GameScreen extends BaseScreen {
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        bulletPool.dispose();
         super.dispose();
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        switch (keycode) {
-            case Input.Keys.RIGHT:
-                ship.moveRight();
-                break;
-            case Input.Keys.LEFT:
-                ship.moveLeft();
-                break;
-        }
+        ship.keyDown(keycode);
         return super.keyDown(keycode);
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        switch (keycode) {
-            case Input.Keys.RIGHT:
-            case Input.Keys.LEFT:
-                ship.stop();
-                break;
-        }
+        ship.keyUp(keycode);
         return super.keyUp(keycode);
     }
 
@@ -94,13 +87,19 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
+        ship.touchUp(touch, pointer, button);
         return super.touchUp(touch, pointer, button);
     }
 
     private void update(float delta) {
         for (Star star : stars)
             star.update(delta);
+        bulletPool.updateActiveObjects(delta);
         ship.update(delta);
+    }
+
+    private void freeAllDestroyed() {
+        bulletPool.freeAllDestroyedActiveObjects();
     }
 
     private void draw() {
@@ -110,6 +109,7 @@ public class GameScreen extends BaseScreen {
         background.draw(batch);
         for (Star star : stars)
             star.draw(batch);
+        bulletPool.drawActiveObjects(batch);
         ship.draw(batch);
         batch.end();
     }
