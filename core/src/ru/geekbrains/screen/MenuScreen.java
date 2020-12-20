@@ -45,6 +45,7 @@ public class MenuScreen extends BaseScreen {
         }
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
+        music.play();
     }
 
     @Override
@@ -73,6 +74,7 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
+        playPos = music.getPosition();
         buttonExit.touchDown(touch, pointer, button);
         buttonPlay.touchDown(touch, pointer, button);
         return false;
