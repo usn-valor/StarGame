@@ -9,10 +9,16 @@ import ru.geekbrains.math.Rect;
 import ru.geekbrains.math.Rnd;
 import ru.geekbrains.pool.EnemyPool;
 import ru.geekbrains.sprite.EnemyShip;
+import ru.geekbrains.sprite.EnemyType;
 
 public class EnemyEmitter {
 
     private static final float GENERATE_INTERVAL = 4f;
+
+    private static final float RELEASE_V_Y = -0.5f;
+    private static final float AFTER_RELEASE_V_Y_SMALL = -0.2f;
+    private static final float AFTER_RELEASE_V_Y_MIDDLE = -0.03f;
+    private static final float AFTER_RELEASE_V_Y_BIG = -0.005f;
 
     private static final float ENEMY_SMALL_HEIGHT = 0.1f;
     private static final float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
@@ -32,13 +38,13 @@ public class EnemyEmitter {
     private static final float ENEMY_BIG_RELOAD_INTERVAL = 2f;
     private static final int ENEMY_BIG_HP = 10;
 
-    private final Vector2 enemySmallV = new Vector2(0, -0.2f);
+    private final Vector2 enemySmallV = new Vector2(0, RELEASE_V_Y);
     private final Vector2 enemySmallBulletV = new Vector2(0, -0.3f);
 
-    private final Vector2 enemyMiddleV = new Vector2(0, -0.03f);
+    private final Vector2 enemyMiddleV = new Vector2(0, RELEASE_V_Y);
     private final Vector2 enemyMiddleBulletV = new Vector2(0, -0.3f);
 
-    private final Vector2 enemyBigV = new Vector2(0, -0.005f);
+    private final Vector2 enemyBigV = new Vector2(0, RELEASE_V_Y);
     private final Vector2 enemyBigBulletV = new Vector2(0, -0.3f);
 
     private final Rect worldBounds;
@@ -74,6 +80,7 @@ public class EnemyEmitter {
             float type = (float) Math.random();
             if (type < 0.5f) {
                 enemy.set(
+                        EnemyType.SMALL,
                         enemySmallRegions,
                         bulletRegion,
                         bulletSound,
@@ -87,6 +94,7 @@ public class EnemyEmitter {
                 );
             } else if (type < 0.8f) {
                 enemy.set(
+                        EnemyType.MIDDLE,
                         enemyMiddleRegions,
                         bulletRegion,
                         bulletSound,
@@ -100,6 +108,7 @@ public class EnemyEmitter {
                 );
             } else {
                 enemy.set(
+                        EnemyType.BIG,
                         enemyBigRegions,
                         bulletRegion,
                         bulletSound,
@@ -114,6 +123,25 @@ public class EnemyEmitter {
             }
             enemy.pos.x = Rnd.nextFloat(worldBounds.getLeft() - enemy.getHalfWidth(), worldBounds.getRight() + enemy.getHalfWidth());
             enemy.setBottom(worldBounds.getTop());
+        }
+        updateVyRelease();
+    }
+
+    private void updateVyRelease() {
+        for (EnemyShip e: enemyPool.getActiveObjects()) {
+            if (e.pos.y < worldBounds.getTop() && e.getVy() == RELEASE_V_Y) {
+                switch (e.getType()) {
+                    case SMALL:
+                        e.setAfterReleaseVector(new Vector2(0, AFTER_RELEASE_V_Y_SMALL));
+                        break;
+                    case MIDDLE:
+                        e.setAfterReleaseVector(new Vector2(0, AFTER_RELEASE_V_Y_MIDDLE));
+                        break;
+                    case BIG:
+                        e.setAfterReleaseVector(new Vector2(0, AFTER_RELEASE_V_Y_BIG));
+                }
+                e.shootReloader();
+            }
         }
     }
 }

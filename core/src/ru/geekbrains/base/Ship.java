@@ -24,7 +24,7 @@ public abstract class Ship extends Sprite {
     protected Rect worldBounds;
 
     protected float reloadInterval;
-    private float reloadTimer;
+    protected float reloadTimer;
 
     private final BulletPool bulletPool;
 
