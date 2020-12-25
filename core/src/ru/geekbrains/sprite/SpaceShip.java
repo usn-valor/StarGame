@@ -8,10 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.base.Ship;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 
 public class SpaceShip extends Ship {
 
-    private static final int HP = 100;
+    private static final int HP = 15;
     private static final float RELOAD_INTERVAL = 0.2f;
 
     private static final float HEIGHT = 0.15f;
@@ -25,8 +26,8 @@ public class SpaceShip extends Ship {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
-    public SpaceShip(TextureAtlas atlas, BulletPool bulletPool) {
-        super(atlas.findRegion("main_ship"), 1, 2, 2, bulletPool);
+    public SpaceShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool) {
+        super(atlas.findRegion("main_ship"), 1, 2, 2, bulletPool, explosionPool);
         bulletRegion = atlas.findRegion("bulletMainShip");
         bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         bulletV = new Vector2(0, 0.5f);
@@ -37,6 +38,13 @@ public class SpaceShip extends Ship {
         v0 = new Vector2(0.5f, 0);
         reloadInterval = RELOAD_INTERVAL;
         hp = HP;
+    }
+
+    public void resetAllParameters() {
+        this.hp = HP;
+        setBottom(worldBounds.getBottom() + BOTTOM_MARGIN);
+        pos.x = 0;
+        flushDestroy();
     }
 
     @Override
@@ -155,4 +163,10 @@ public class SpaceShip extends Ship {
         v.setZero();
     }
 
+    public boolean isBulletCollision(Bullet bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom());
+    }
 }

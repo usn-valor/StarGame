@@ -6,9 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Bullet;
+import ru.geekbrains.sprite.Explosion;
 
 public abstract class Ship extends Sprite {
+
+    private static final float DAMAGE_ANIMATE_INTERVAL = 0.1f;
 
     protected TextureRegion bulletRegion;
     protected Sound bulletSound;
@@ -25,16 +29,22 @@ public abstract class Ship extends Sprite {
 
     protected float reloadInterval;
     protected float reloadTimer;
+    private float damageAnimateTimer;
 
     private final BulletPool bulletPool;
+    private final ExplosionPool explosionPool;
 
-    public Ship(BulletPool bulletPool) {
+    public Ship(BulletPool bulletPool, ExplosionPool explosionPool) {
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
+        damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
     }
 
-    public Ship(TextureRegion region, int rows, int cols, int frames, BulletPool bulletPool) {
+    public Ship(TextureRegion region, int rows, int cols, int frames, BulletPool bulletPool, ExplosionPool explosionPool) {
         super(region, rows, cols, frames);
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
+        damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
     }
 
     @Override
@@ -45,11 +55,40 @@ public abstract class Ship extends Sprite {
             reloadTimer = 0f;
             shoot();
         }
+        damageAnimateTimer += delta;
+        if (damageAnimateTimer >= DAMAGE_ANIMATE_INTERVAL) {
+            frame = 0;
+        }
     }
 
     private void shoot() {
         bulletSound.play(0.5f);
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, bulletPos, bulletV, bulletHeight, worldBounds, damage);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        boom();
+    }
+
+    public void damage(int damage) {
+        this.hp -= damage;
+        if (hp <= 0) {
+            hp = 0;
+            destroy();
+        }
+        frame = 1;
+        damageAnimateTimer = 0f;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    private void boom() {
+        Explosion explosion = explosionPool.obtain();
+        explosion.set(this.pos, getHeight());
     }
 }

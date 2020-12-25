@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class BaseButton extends Sprite {
 
-    private static final float SCALE = 0.9f;
+    protected static final float SCALE = 0.9f;
 
     private int pointer;
     private boolean pressed;

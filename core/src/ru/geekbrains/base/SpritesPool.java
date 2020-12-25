@@ -24,6 +24,10 @@ public abstract class SpritesPool<T extends Sprite> {
         return object;
     }
 
+    public void clearActiveSpritesPool () {
+        activeObjects.clear();
+    }
+
     public void updateActiveObjects(float delta) {
         for (T object : activeObjects) {
             if (object.isDestroyed()) {
