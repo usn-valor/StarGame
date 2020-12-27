@@ -47,6 +47,14 @@ public abstract class Ship extends Sprite {
         damageAnimateTimer = DAMAGE_ANIMATE_INTERVAL;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public Vector2 getV() {
+        return v;
+    }
+
     @Override
     public void update(float delta) {
         pos.mulAdd(v, delta);

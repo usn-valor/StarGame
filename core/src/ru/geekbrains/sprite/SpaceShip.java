@@ -12,7 +12,7 @@ import ru.geekbrains.pool.ExplosionPool;
 
 public class SpaceShip extends Ship {
 
-    private static final int HP = 15;
+    private static final int HP = 100;
     private static final float RELOAD_INTERVAL = 0.2f;
 
     private static final float HEIGHT = 0.15f;
@@ -42,9 +42,10 @@ public class SpaceShip extends Ship {
 
     public void resetAllParameters() {
         this.hp = HP;
+        this.pos.x = 0;
         setBottom(worldBounds.getBottom() + BOTTOM_MARGIN);
-        pos.x = 0;
         flushDestroy();
+        frame = 0;
     }
 
     @Override
